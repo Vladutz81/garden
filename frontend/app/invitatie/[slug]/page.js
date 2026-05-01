@@ -1,0 +1,2 @@
+import { api } from '../../../lib/api';
+export default async function({params}){const {data}=await api.get(`/invitatii/public/${params.slug}`); return <main className='container card'><h1>{data.titlu}</h1><p>{new Date(data.dataEveniment||Date.now()).toLocaleDateString('ro-RO')}</p><p>{data.locatie}</p><p>{data.textPersonalizat}</p><form method='post' action={`${process.env.NEXT_PUBLIC_API_URL}/invitatii/${data._id}/rsvp`}><input name='nume' placeholder='Nume'/><input name='telefon' placeholder='Telefon'/><button className='btn'>Confirmă RSVP</button></form></main>}

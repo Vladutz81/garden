@@ -1,0 +1,26 @@
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
+import mongoSanitize from 'express-mongo-sanitize';
+import xss from 'xss-clean';
+import rateLimit from 'express-rate-limit';
+import authRoutes from './routes/authRoutes.js';
+import invitationRoutes from './routes/invitationRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
+
+const app = express();
+app.use(helmet());
+app.use(cors({ origin: process.env.FRONTEND_URL }));
+app.use(express.json({ limit: '1mb' }));
+app.use(cookieParser());
+app.use(mongoSanitize());
+app.use(xss());
+app.use('/api', rateLimit({ windowMs: 15*60*1000, max: 300 }));
+app.get('/api/health', (_,res)=>res.json({ok:true}));
+app.use('/api/auth', authRoutes);
+app.use('/api/invitatii', invitationRoutes);
+app.use('/api/plati', paymentRoutes);
+app.use(`/api/${process.env.ADMIN_SECRET_PATH}`, adminRoutes);
+export default app;
